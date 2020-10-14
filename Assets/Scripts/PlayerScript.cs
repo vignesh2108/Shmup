@@ -3,15 +3,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class PlayerScript : MonoBehaviour {
-    private float     xPos;
-    public float      speed = .05f;
-    public float      leftWall, rightWall;
-    public GameObject projectile;
+    // private float     xPos;
+    // public float      speed = .05f;
+    // public float      leftWall, rightWall;
     public float health = 1f;
-    public KeyCode fireKey;
-
+    public Rigidbody2D rb;
+    private Vector2 movement;
+    private Vector2 mousePos;
+    public float moveSpeed = 5f;
+    public Camera cam;
     public Image healthbar;
     // Start is called before the first frame update
     void Start() {
@@ -20,24 +23,22 @@ public class PlayerScript : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
-        if (Input.GetKey(KeyCode.LeftArrow)) {
-            if (xPos > leftWall) {
-                xPos -= speed;
-            }
-        }
-
-        if (Input.GetKey(KeyCode.RightArrow)) {
-            if (xPos < rightWall) {
-                xPos += speed;
-            }
-        }
-
-        if (Input.GetKeyDown(fireKey))
+        movement.x = Input.GetAxisRaw("Horizontal");
+        movement.y = Input.GetAxisRaw("Vertical");
+        mousePos = cam.ScreenToWorldPoint(Input.mousePosition);
+        if (health < 0.1)
         {
-            Instantiate(projectile, new Vector2(transform.position.x, transform.position.y*0.5f), Quaternion.identity);
+            SceneManager.LoadScene ("GameOver");
         }
+    }
 
-        transform.localPosition = new Vector3(xPos, transform.position.y, 0);
+    private void FixedUpdate()
+    {
+        rb.MovePosition(rb.position + movement * moveSpeed * Time.fixedDeltaTime);
+
+        Vector2 lookDir = mousePos - rb.position;
+        float angle = Mathf.Atan2(lookDir.y, lookDir.x) * Mathf.Rad2Deg ;
+        rb.rotation = angle;
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -46,6 +47,21 @@ public class PlayerScript : MonoBehaviour {
         {
             Destroy(other.gameObject);
             health -= 0.1f;
+            healthbar.fillAmount = health;
+        }
+
+        if (other.gameObject.tag == "HealthPack")
+        {
+            Destroy((other.gameObject));
+            if (health < 0.7)
+            {
+                health += 0.3f;
+            }
+            else
+            {
+                health = 1; 
+            }
+            
             healthbar.fillAmount = health;
         }
     }

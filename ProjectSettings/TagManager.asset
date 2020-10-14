@@ -4,12 +4,23 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - wall
-  - paddle
-  - brick
   - Enemy
-  - Projectile
+  - Weapon
+  - GunBody
+  - GunSight
+  - GunBarrel
+  - GunMuzzle
+  - GunClip
+  - GunProjectile
+  - Wall
+  - GunStock
+  - SmokeTrail
+  - Spawner
+  - GunFlash
   - EnemyProjectile
+  - Projectile
+  - wall
+  - HealthPack
   layers:
   - Default
   - TransparentFX
@@ -19,7 +30,7 @@ TagManager:
   - UI
   - 
   - 
-  - 
+  - Enemy
   - 
   - 
   - 
